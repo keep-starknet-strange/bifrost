@@ -1,0 +1,17 @@
+node_modules
+
+#Hardhat files
+cache
+artifacts
+factories
+typechain
+
+yarn.lock
+
+.env
+
+typechain/*
+
+starknet-artifacts/*
+
+notes.md
