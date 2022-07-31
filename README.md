@@ -49,6 +49,15 @@ The bridge on L1 handles sending tokens back to L2. Upon receiving the message, 
 
 The diagram shows the steps of creating a token on L1
 
+## Example contracts
+
+| Contract                 | Link                                                                                                                                      |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| L2 ERC20 Contract Class  | [L2 ERC20 Contract Class](https://beta-goerli.voyager.online/contract/0x061d12d85dd50f9fdba87cdb0a2170ece3d7b3e6eabaaeaf2f88b1dae44c94dc) |
+| L2 ERC20 Contract        | [L2 ERC20 Contract](https://beta-goerli.voyager.online/contract/0x050d5605ab9cfcc126de145635776c6a144445d61f738cc99826f92e02b4dc0f)       |
+| L1 ERC20 Goerli Bridge   | [L1 ERC20 Goerli Bridge](https://goerli.etherscan.io/address/0xb5029935a185a8fec57b178543481f48cb6665c6)                                  |
+| L1 ERC20 Goerli Instance | [L1 ERC20 Goerli Instance](https://goerli.etherscan.io/address/0xA3253C36C66c51CC7182D0D5dD8d12f8AAC5dE7a)                                |
+
 ## Building
 
 ### Pre Requisites
@@ -75,6 +84,14 @@ Run the Mocha tests:
 ```sh
 $ yarn test
 ```
+
+### Deployment
+
+See the env variables in `./env.example` for variables requires for deployment of the contracts
+
+## Disclaimer
+
+These contracts are only given as an example. They HAVE NOT undergone any audit. They SHOULD NOT be used for any production level application.
 
 If you like it than you shoulda put a start ⭐ on it
 
