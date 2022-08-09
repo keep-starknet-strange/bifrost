@@ -7,7 +7,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 from starkware.starknet.common.messages import send_message_to_l1
 from starkware.cairo.common.bool import TRUE
 
-from openzeppelin.access.ownable import Ownable
+from openzeppelin.access.ownable.library import Ownable
 from openzeppelin.token.erc20.library import ERC20
 
 from contracts.Bridgable import Bridgable
