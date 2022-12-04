@@ -21,7 +21,6 @@ describe("Deploy ERC20 contract", async function () {
   let account1: Account;
 
   before(async () => {
-    testERC20ContractFactory = await starknet.getContractFactory("ERC20_mintable");
     // Use preconfigured accounts
     const response = await starknet.devnet.getPredeployedAccounts();
     account0 = await starknet.getAccountFromAddress(response[0].address, response[0].private_key, "OpenZeppelin");
@@ -29,7 +28,10 @@ describe("Deploy ERC20 contract", async function () {
 
     console.log("Account1", account0.address);
 
-    let classHash = await testERC20ContractFactory.declare();
+    testERC20ContractFactory = await starknet.getContractFactory("ERC20_mintable");
+    const classHash = await account0.declare(testERC20ContractFactory, {
+      maxFee: BigInt("200000000000000"),
+    });
     console.log("Class Hash", classHash);
 
     tokenContract = await testERC20ContractFactory.deploy({

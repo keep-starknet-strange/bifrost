@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MIT
-# OpenZeppelin Contracts for Cairo v0.2.0 (access/ownable.cairo)
+// SPDX-License-Identifier: MIT
+// OpenZeppelin Contracts for Cairo v0.2.0 (access/ownable.cairo)
 
 %lang starknet
 
@@ -10,101 +10,101 @@ from starkware.starknet.common.messages import send_message_to_l1
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.uint256 import Uint256
 
-#
-# Events
-#
+//
+// Events
+//
 
 @event
-func L1InstanceCreated():
-end
+func L1InstanceCreated() {
+}
 
 @event
-func TokensBridgedToL1(l1_recipient : felt, amount : Uint256):
-end
+func TokensBridgedToL1(l1_recipient: felt, amount: Uint256) {
+}
 
 @event
-func TokensBridgedFromL1(l2_recipient : felt, amount : Uint256):
-end
+func TokensBridgedFromL1(l2_recipient: felt, amount: Uint256) {
+}
 
-#
-# Storage
-#
+//
+// Storage
+//
 
 @storage_var
-func Bridgable_bridge() -> (bridge : felt):
-end
+func Bridgable_bridge() -> (bridge: felt) {
+}
 
-namespace Bridgable:
-    #
-    # Constructor
-    #
+namespace Bridgable {
+    //
+    // Constructor
+    //
 
-    func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        bridge : felt
-    ):
-        Bridgable_bridge.write(bridge)
-        return ()
-    end
+    func initializer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        bridge: felt
+    ) {
+        Bridgable_bridge.write(bridge);
+        return ();
+    }
 
-    #
-    # Protector (Modifier)
-    #
+    //
+    // Protector (Modifier)
+    //
 
-    #
-    # Public
-    #
+    //
+    // Public
+    //
 
-    func bridge{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-        bridge : felt
-    ):
-        let (bridge) = Bridgable_bridge.read()
-        return (bridge=bridge)
-    end
+    func bridge{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
+        bridge: felt
+    ) {
+        let (bridge) = Bridgable_bridge.read();
+        return (bridge=bridge);
+    }
 
-    func create_l1_instance{pedersen_ptr : HashBuiltin*, syscall_ptr : felt*, range_check_ptr}(
-        name : felt, symbol : felt
-    ):
-        alloc_locals
-        let (message_payload : felt*) = alloc()
-        let (bridge) = Bridgable_bridge.read()
-        assert message_payload[0] = name
-        assert message_payload[1] = symbol
-        send_message_to_l1(to_address=bridge, payload_size=2, payload=message_payload)
-        L1InstanceCreated.emit()
-        return ()
-    end
+    func create_l1_instance{pedersen_ptr: HashBuiltin*, syscall_ptr: felt*, range_check_ptr}(
+        name: felt, symbol: felt
+    ) {
+        alloc_locals;
+        let (message_payload: felt*) = alloc();
+        let (bridge) = Bridgable_bridge.read();
+        assert message_payload[0] = name;
+        assert message_payload[1] = symbol;
+        send_message_to_l1(to_address=bridge, payload_size=2, payload=message_payload);
+        L1InstanceCreated.emit();
+        return ();
+    }
 
-    func bridge_tokens_to_l1{pedersen_ptr : HashBuiltin*, syscall_ptr : felt*, range_check_ptr}(
-        l1_recipient : felt, amount : Uint256
-    ):
-        alloc_locals
-        let (message_payload : felt*) = alloc()
-        let (caller) = get_caller_address()
+    func bridge_tokens_to_l1{pedersen_ptr: HashBuiltin*, syscall_ptr: felt*, range_check_ptr}(
+        l1_recipient: felt, amount: Uint256
+    ) {
+        alloc_locals;
+        let (message_payload: felt*) = alloc();
+        let (caller) = get_caller_address();
 
-        let (bridge) = Bridgable_bridge.read()
-        assert message_payload[0] = l1_recipient
-        assert message_payload[1] = amount.low
-        assert message_payload[2] = amount.high
-        send_message_to_l1(to_address=bridge, payload_size=3, payload=message_payload)
-        TokensBridgedToL1.emit(l1_recipient, amount)
-        return ()
-    end
+        let (bridge) = Bridgable_bridge.read();
+        assert message_payload[0] = l1_recipient;
+        assert message_payload[1] = amount.low;
+        assert message_payload[2] = amount.high;
+        send_message_to_l1(to_address=bridge, payload_size=3, payload=message_payload);
+        TokensBridgedToL1.emit(l1_recipient, amount);
+        return ();
+    }
 
-    func bridge_tokens_from_l1{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        from_address : felt, l2_recipient : felt, amount : Uint256
-    ):
-        # check l1 message sender?
-        let (bridge) = Bridgable_bridge.read()
-        with_attr error_message("message-not-from-bridge"):
-            assert from_address = bridge
-        end
+    func bridge_tokens_from_l1{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        from_address: felt, l2_recipient: felt, amount: Uint256
+    ) {
+        // check l1 message sender?
+        let (bridge) = Bridgable_bridge.read();
+        with_attr error_message("message-not-from-bridge") {
+            assert from_address = bridge;
+        }
 
-        TokensBridgedFromL1.emit(l2_recipient, amount)
+        TokensBridgedFromL1.emit(l2_recipient, amount);
 
-        return ()
-    end
+        return ();
+    }
 
-    #
-    # Internal
-    #
-end
+    //
+    // Internal
+    //
+}

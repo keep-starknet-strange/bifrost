@@ -5,48 +5,48 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import deploy
 from starkware.cairo.common.uint256 import Uint256
 
-# Define a storage variable for the salt.
+// Define a storage variable for the salt.
 @storage_var
-func salt() -> (value : felt):
-end
+func salt() -> (value: felt) {
+}
 
 @storage_var
-func deployable_class_hash() -> (value : felt):
-end
+func deployable_class_hash() -> (value: felt) {
+}
 
 @storage_var
-func _bridge() -> (value : felt):
-end
+func _bridge() -> (value: felt) {
+}
 
 @event
-func contract_deployed(contract_address : felt):
-end
+func contract_deployed(contract_address: felt) {
+}
 
 @constructor
-func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    class_hash : felt, bridge : felt
-):
-    deployable_class_hash.write(value=class_hash)
-    _bridge.write(value=bridge)
-    return ()
-end
+func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    class_hash: felt, bridge: felt
+) {
+    deployable_class_hash.write(value=class_hash);
+    _bridge.write(value=bridge);
+    return ();
+}
 
 @external
-func deploy_contract{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    name : felt, symbol : felt, decimals : felt, initial_supply : Uint256, recipient : felt
-):
-    let (current_salt) = salt.read()
-    let (bridge) = _bridge.read()
-    let (class_hash) = deployable_class_hash.read()
+func deploy_contract{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    name: felt, symbol: felt, decimals: felt, initial_supply: Uint256, recipient: felt
+) {
+    let (current_salt) = salt.read();
+    let (bridge) = _bridge.read();
+    let (class_hash) = deployable_class_hash.read();
     let (contract_address) = deploy(
         class_hash=class_hash,
         contract_address_salt=current_salt,
         constructor_calldata_size=7,
         constructor_calldata=cast(new (name, symbol, decimals, initial_supply.low, initial_supply.high, recipient, bridge), felt*),
         deploy_from_zero=0,
-    )
-    salt.write(value=current_salt + 1)
+    );
+    salt.write(value=current_salt + 1);
 
-    contract_deployed.emit(contract_address=contract_address)
-    return ()
-end
+    contract_deployed.emit(contract_address=contract_address);
+    return ();
+}

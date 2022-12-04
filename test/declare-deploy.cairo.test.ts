@@ -2,8 +2,7 @@ import { BigNumber } from "ethers";
 import { expect } from "chai";
 import { starknet } from "hardhat";
 import { TIMEOUT } from "./constants";
-import { ensureEnvVar } from "./util";
-import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
+import { Account } from "hardhat/types/runtime";
 import { shortString, uint256, number } from "starknet";
 
 // const init_balance = "1000000000000000000";
@@ -18,27 +17,14 @@ describe("Class declaration", function () {
     const response = await starknet.devnet.getPredeployedAccounts();
     account = await starknet.getAccountFromAddress(response[0].address, response[0].private_key, "OpenZeppelin");
 
-    // Possibly use a real account when you can
-    // account = await starknet.getAccountFromAddress(
-    //   ensureEnvVar("DEVNET_OZ_ACCOUNT_ADDRESS"),
-    //   ensureEnvVar("DEVNET_OZ_ACCOUNT_PRIVATE_KEY"),
-    //   "OpenZeppelin",
-    // );
-    // account = await starknet.getAccountFromAddress(
-    //   ensureEnvVar("OZ_ACCOUNT_ADDRESS"),
-    //   ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-    //   "OpenZeppelin",
-    // );
-    // let deployAccountOptions = {
-    //   privateKey: ensureEnvVar("OZ_ACCOUNT_PRIVATE_KEY"),
-    // };
-    // account = await starknet.deployAccount("OpenZeppelin", deployAccountOptions);
-
     let ERC20ContractFactory = await starknet.getContractFactory("ERC20_mintable");
-    const classHash = await ERC20ContractFactory.declare();
+    const classHash = await account.declare(ERC20ContractFactory, {
+      maxFee: BigInt("150000000000000"),
+    });
     console.log("ClassHash", classHash);
 
     const deployerFactory = await starknet.getContractFactory("deployer");
+    // TODO: this might not work in the future
     const deployer = await deployerFactory.deploy(
       {
         class_hash: classHash,
@@ -66,10 +52,6 @@ describe("Class declaration", function () {
     });
 
     const receipt = await starknet.getTransactionReceipt(deploymentHash);
-    // console.log("Receipt", receipt);
-    // console.log(receipt.events[0]);
-    // console.log(receipt.events[1]);
-    // console.log(receipt.events[2]);
     const deploymentEvent = receipt.events[2];
     const deploymentAddress = deploymentEvent.data[0];
     console.log("ERC20 Deployment address", deploymentAddress);
@@ -81,6 +63,6 @@ describe("Class declaration", function () {
     let accountBalance = await contract.call("balanceOf", { account: account.address });
     console.log(accountBalance);
 
-    // expect(res.totalSupply.low).to.deep.equal(init_balance);
+    expect(res.totalSupply.low).to.deep.equal(init_balance);
   });
 });
