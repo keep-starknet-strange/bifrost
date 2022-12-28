@@ -15,3 +15,5 @@ typechain/*
 starknet-artifacts/*
 
 notes.md
+
+venv
