@@ -15,19 +15,24 @@ describe("Class declaration", function () {
 
   it("should declare and deploy a class", async function () {
     const response = await starknet.devnet.getPredeployedAccounts();
-    account = await starknet.getAccountFromAddress(response[0].address, response[0].private_key, "OpenZeppelin");
+    account = await starknet.OpenZeppelinAccount.getAccountFromAddress(response[0].address, response[0].private_key);
 
-    let ERC20ContractFactory = await starknet.getContractFactory("ERC20_mintable");
-    const classHash = await account.declare(ERC20ContractFactory, {
+    let erc20ContractFactory = await starknet.getContractFactory("ERC20_mintable");
+    const erc20ClassHash = await account.declare(erc20ContractFactory, {
       maxFee: BigInt("150000000000000"),
     });
-    console.log("ClassHash", classHash);
+    console.log("ERC20 classHash", erc20ClassHash);
 
     const deployerFactory = await starknet.getContractFactory("deployer");
-    // TODO: this might not work in the future
-    const deployer = await deployerFactory.deploy(
+    const deployerClassHash = await account.declare(deployerFactory, {
+      maxFee: BigInt("150000000000000"),
+    });
+
+    // Deployting the deployer
+    const deployer = await account.deploy(
+      deployerFactory,
       {
-        class_hash: classHash,
+        class_hash: erc20ClassHash,
         bridge: bridge,
       },
       { salt: "0x42" },
@@ -56,7 +61,7 @@ describe("Class declaration", function () {
     const deploymentAddress = deploymentEvent.data[0];
     console.log("ERC20 Deployment address", deploymentAddress);
 
-    const contract = ERC20ContractFactory.getContractAt(deploymentAddress);
+    const contract = erc20ContractFactory.getContractAt(deploymentAddress);
     const res = await contract.call("totalSupply");
     console.log(res);
 
@@ -64,5 +69,5 @@ describe("Class declaration", function () {
     console.log(accountBalance);
 
     expect(res.totalSupply.low).to.deep.equal(init_balance);
-  });
+  }).timeout(TIMEOUT);
 });
