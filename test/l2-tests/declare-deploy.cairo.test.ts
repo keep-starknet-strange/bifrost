@@ -19,13 +19,13 @@ describe("Class declaration", function () {
 
     let erc20ContractFactory = await starknet.getContractFactory("ERC20_mintable");
     const erc20ClassHash = await account.declare(erc20ContractFactory, {
-      maxFee: BigInt("150000000000000"),
+      maxFee: 150000000000000n,
     });
     console.log("ERC20 classHash", erc20ClassHash);
 
     const deployerFactory = await starknet.getContractFactory("deployer");
-    const deployerClassHash = await account.declare(deployerFactory, {
-      maxFee: BigInt("150000000000000"),
+    await account.declare(deployerFactory, {
+      maxFee: 150000000000000n,
     });
 
     // Deployting the deployer

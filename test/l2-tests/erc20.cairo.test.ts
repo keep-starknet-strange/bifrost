@@ -30,7 +30,7 @@ describe("Deploy ERC20 contract", async function () {
 
     testERC20ContractFactory = await starknet.getContractFactory("ERC20_mintable");
     const classHash = await account0.declare(testERC20ContractFactory, {
-      maxFee: BigInt("200000000000000"),
+      maxFee: 200000000000000n,
     });
     console.log("Class Hash", classHash);
 
