@@ -1,17 +1,17 @@
 import { expect } from "chai";
 
 export function expectFeeEstimationStructure(fee: any) {
-    console.log("Estimated fee:", fee);
-    expect(fee).to.haveOwnProperty("amount");
-    expect(typeof fee.amount).to.equal("bigint");
-    expect(fee.unit).to.equal("wei");
+  console.log("Estimated fee:", fee);
+  expect(fee).to.haveOwnProperty("amount");
+  expect(typeof fee.amount).to.equal("bigint");
+  expect(fee.unit).to.equal("wei");
 }
 
 export function ensureEnvVar(varName: string): string {
-    if (!process.env[varName]) {
-        throw new Error(`Env var ${varName} not set or empty`);
-    }
-    return process.env[varName] as string;
+  if (!process.env[varName]) {
+    throw new Error(`Env var ${varName} not set or empty`);
+  }
+  return process.env[varName] as string;
 }
 
 /**
@@ -26,8 +26,8 @@ function adaptAddress(address: string) {
 
 /**
  * Expects address equality after adapting them.
- * @param actual 
- * @param expected 
+ * @param actual
+ * @param expected
  */
 export function expectAddressEquality(actual: string, expected: string) {
   expect(adaptAddress(actual)).to.equal(adaptAddress(expected));

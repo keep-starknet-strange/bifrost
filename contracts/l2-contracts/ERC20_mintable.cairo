@@ -10,7 +10,7 @@ from starkware.cairo.common.bool import TRUE
 from openzeppelin.access.ownable.library import Ownable
 from openzeppelin.token.erc20.library import ERC20
 
-from contracts.Bridgable import Bridgable
+from Bridgable import Bridgable
 
 @constructor
 func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(

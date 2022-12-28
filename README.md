@@ -66,7 +66,10 @@ Before running any command, make sure to install dependencies:
 
 ```sh
 $ yarn install # Installing hardhat
-$ pip install -r requirements.txt # For OpenZeppelin contract
+
+$ python3 -m venv venv # Create virtual environment
+$ source venv/bin/activate
+$ pip install -r requirements.txt # Install starknet suite
 ```
 
 ### Compile
@@ -79,7 +82,7 @@ $ yarn compile
 
 ### Test
 
-Run the Mocha tests:
+Run the tests:
 
 ```sh
 $ yarn test
@@ -93,9 +96,7 @@ See the env variables in `./env.example` for variables requires for deployment o
 
 These contracts are only given as an example. They HAVE NOT undergone any audit. They SHOULD NOT be used for any production level application.
 
-If you like it than you shoulda put a start ⭐ on it
-
-Twitter: [@amanusk\_][https://twitter.com/amanusk_]
+If you like it than you shoulda put a star ⭐ on it
 
 ## License
 

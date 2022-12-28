@@ -6,7 +6,9 @@ from starkware.starknet.testing.contract_utils import get_contract_class
 from starkware.starknet.services.api.contract_class import ContractClass
 
 
-with open("./starknet-artifacts/contracts/ERC20_mintable.cairo/ERC20_mintable.json", "r") as f:
+with open(
+    "./starknet-artifacts/contracts/ERC20_mintable.cairo/ERC20_mintable.json", "r"
+) as f:
     contract = load(f)
 
 program = Program.load(data=contract["program"])

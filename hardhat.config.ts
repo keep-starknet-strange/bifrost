@@ -1,20 +1,11 @@
-import { task } from "hardhat/config";
+import { HardhatUserConfig } from "hardhat/config";
+import { NetworkUserConfig } from "hardhat/types";
+import "@nomicfoundation/hardhat-toolbox";
+import "@shardlabs/starknet-hardhat-plugin";
 
 import { config as dotenvConfig } from "dotenv";
 import { resolve } from "path";
 dotenvConfig({ path: resolve(__dirname, "./.env") });
-
-import { HardhatUserConfig } from "hardhat/types";
-import { NetworkUserConfig } from "hardhat/types";
-
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
-
-import "hardhat-gas-reporter";
-import "@nomiclabs/hardhat-etherscan";
-
-import "@shardlabs/starknet-hardhat-plugin";
 
 const chainIds = {
   ganache: 1337,
@@ -30,16 +21,6 @@ const MNEMONIC = process.env.MNEMONIC || "";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || "";
-
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (args, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(await account.getAddress());
-  }
-});
 
 function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
   const url: string = "https://" + network + ".infura.io/v3/" + INFURA_API_KEY;
@@ -60,7 +41,7 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
 
 const config: HardhatUserConfig = {
   paths: {
-    cairoPaths: [`/home/${process.env.USER}/cairo_venv/lib/python3.8/site-packages`],
+    cairoPaths: [`./venv/lib/python3.8/site-packages`],
   },
   defaultNetwork: "hardhat",
   networks: {
@@ -105,13 +86,6 @@ const config: HardhatUserConfig = {
     // dockerizedVersion: "0.9.1", // alternatively choose one of the two venv options below
     venv: "active",
     network: "devnet",
-    // wallets: {
-    //   OpenZeppelin: {
-    //     accountName: "OpenZeppelin",
-    //     modulePath: "starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount",
-    //     accountPath: "~/.starknet_accounts",
-    //   },
-    // },
   },
 };
 
