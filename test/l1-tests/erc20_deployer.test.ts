@@ -1,6 +1,5 @@
 import { ethers } from "hardhat";
-import chai from "chai";
-import { solidity } from "ethereum-waffle";
+import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 // type Create2Options = {
@@ -11,9 +10,6 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 // };
 
 let saltHex = "0x0563b71ac29b54ef78bbfdB3FBF0338441D3948c573621E7824f9DbC1cE23d56"; // just some random L2 account
-
-chai.use(solidity);
-const { expect } = chai;
 
 describe("Test utils", () => {
   async function deployContracts() {
@@ -81,7 +77,7 @@ describe("Token", () => {
     let res = await deployerContract.createERC20(deployer.address, saltHex, "TOKEN1", "TKN1", { gasLimit: 1000000 });
     // console.log("Deployment res", res);
 
-    const tokenFactory = await ethers.getContractFactory("FactoryERC20");
+    const tokenFactory = await ethers.getContractFactory("BridgedERC20");
     const tokenInstance = tokenFactory.attach(erc20InstanceAddress).connect(deployer);
 
     return { deployer, user, tokenInstance };

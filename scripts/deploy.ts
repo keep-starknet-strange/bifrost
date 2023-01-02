@@ -11,7 +11,7 @@ async function main(): Promise<void> {
   // to make sure everything is compiled
   // await run("compile");
   // We get the contract to deploy
-  const TestTokenFactory: ContractFactory = await ethers.getContractFactory("FactoryERC20");
+  const TestTokenFactory: ContractFactory = await ethers.getContractFactory("BridgedERC20");
   const testToken: Contract = await TestTokenFactory.deploy("TEST", "TST");
   await testToken.deployed();
   console.log("TestToken deployed to: ", testToken.address);
