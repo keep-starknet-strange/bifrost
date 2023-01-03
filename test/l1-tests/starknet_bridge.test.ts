@@ -1,6 +1,5 @@
 import { ethers } from "hardhat";
-import chai from "chai";
-import { solidity } from "ethereum-waffle";
+import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 // type Create2Options = {
@@ -12,76 +11,87 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 let saltHex = "0x0563b71ac29b54ef78bbfdB3FBF0338441D3948c573621E7824f9DbC1cE23d56"; // just some random L2 account
 
-chai.use(solidity);
-const { expect } = chai;
-
 describe("Test utils", () => {
   async function deployContracts() {
-    const [deployer] = await ethers.getSigners();
-    const deployerFactory = await ethers.getContractFactory("StarkNetERC20Bridge");
-    const deployerContract = await deployerFactory.deploy();
+    const bridgeUtilsFactory = await ethers.getContractFactory("BridgeUtils");
+    const bridgeUtils = await bridgeUtilsFactory.deploy();
 
-    return { deployer, deployerContract };
+    const [deployer] = await ethers.getSigners();
+    const deployerFactory = await ethers.getContractFactory("StarkNetERC20Bridge", {
+      libraries: {
+        "contracts/l1-contracts/BridgeUtils.sol:BridgeUtils": bridgeUtils.address,
+      },
+    });
+    const starknetBridge = await deployerFactory.deploy();
+
+    return { deployer, starknetBridge, bridgeUtils };
   }
 
   it("Test predicting deployed address", async () => {
-    const { deployer, deployerContract } = await loadFixture(deployContracts);
+    const { deployer, starknetBridge, bridgeUtils } = await loadFixture(deployContracts);
 
-    let baseAccount = await deployerContract.baseAccount();
-    // console.log("Base Account", baseAccount);
+    let baseAccount = await starknetBridge.baseAccount();
 
     const byteCodeHash = ethers.utils.solidityKeccak256(
       ["bytes", "bytes20", "bytes"],
       ["0x3d602d80600a3d3981f3363d3d373d3d3d363d73", baseAccount, "0x5af43d82803e903d91602b57fd5bf3"],
     );
-    // console.log("ByteCodeHash", byteCodeHash);
+    console.log("ByteCodeHash", byteCodeHash);
 
-    let create2PredictedAddress = ethers.utils.getCreate2Address(deployerContract.address, saltHex, byteCodeHash);
-    // console.log("Future create2 Address", create2PredictedAddress);
+    let create2PredictedAddress = ethers.utils.getCreate2Address(starknetBridge.address, saltHex, byteCodeHash);
+    console.log("Future create2 Address", create2PredictedAddress);
 
-    let erc20InstanceAddress = await deployerContract.callStatic.createERC20(
+    let erc20InstanceAddress = await starknetBridge.callStatic.createERC20(
       deployer.address,
       saltHex,
       "TOKEN2",
       "TKN2",
       { gasLimit: 1000000 },
     );
-    // console.log("Deployed ERC20 contract to", erc20InstanceAddress);
+    console.log("Deployed ERC20 contract to", erc20InstanceAddress);
     expect(erc20InstanceAddress).to.equal(create2PredictedAddress);
 
-    let contractAddressFromContract = await deployerContract.computeAddress(saltHex);
-    // console.log("Address from contract", contractAddressFromContract);
+    let contractAddressFromContract = await bridgeUtils.computeAddress(baseAccount, starknetBridge.address, saltHex);
+    console.log("Address from contract", contractAddressFromContract);
 
     expect(contractAddressFromContract).to.equal(create2PredictedAddress);
   });
 
   it("Test string to uint", async () => {
-    const { deployer, deployerContract } = await loadFixture(deployContracts);
+    const { deployer, starknetBridge, bridgeUtils } = await loadFixture(deployContracts);
 
-    let num = await deployerContract.strToUint("TEST");
+    let num = await bridgeUtils.strToUint("TEST");
     expect(num.toNumber()).to.eq(1413829460);
 
-    num = await deployerContract.strToUint("test");
+    num = await bridgeUtils.strToUint("test");
     expect(num.toNumber()).to.eq(1952805748);
   });
 });
 
-describe("Token", () => {
+describe("Test deployed token functionality", () => {
   let erc20InstanceAddress: string;
 
   async function deployContracts() {
     const [deployer, user] = await ethers.getSigners();
-    const deployerFactory = await ethers.getContractFactory("StarkNetERC20Bridge");
-    const deployerContract = await deployerFactory.deploy();
 
-    erc20InstanceAddress = await deployerContract.callStatic.createERC20(deployer.address, saltHex, "TOKEN1", "TKN1", {
+    const bridgeUtilsFactory = await ethers.getContractFactory("BridgeUtils");
+    const bridgeUtils = await bridgeUtilsFactory.deploy();
+
+    const deployerFactory = await ethers.getContractFactory("StarkNetERC20Bridge", {
+      libraries: {
+        "contracts/l1-contracts/BridgeUtils.sol:BridgeUtils": bridgeUtils.address,
+      },
+    });
+    const starknetBridge = await deployerFactory.deploy();
+
+    erc20InstanceAddress = await starknetBridge.callStatic.createERC20(deployer.address, saltHex, "TOKEN1", "TKN1", {
       gasLimit: 3000000,
     });
     // console.log("Deployed ERC20 contract to", erc20InstanceAddress);
-    let res = await deployerContract.createERC20(deployer.address, saltHex, "TOKEN1", "TKN1", { gasLimit: 1000000 });
+    let res = await starknetBridge.createERC20(deployer.address, saltHex, "TOKEN1", "TKN1", { gasLimit: 1000000 });
     // console.log("Deployment res", res);
 
-    const tokenFactory = await ethers.getContractFactory("FactoryERC20");
+    const tokenFactory = await ethers.getContractFactory("BridgedERC20");
     const tokenInstance = tokenFactory.attach(erc20InstanceAddress).connect(deployer);
 
     return { deployer, user, tokenInstance };

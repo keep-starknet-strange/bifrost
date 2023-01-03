@@ -5,7 +5,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 describe("Token", () => {
   async function deployContracts() {
     const [deployer, sender, receiver] = await ethers.getSigners();
-    const tokenFactory = await ethers.getContractFactory("FactoryERC20", deployer);
+    const tokenFactory = await ethers.getContractFactory("BridgedERC20", deployer);
     let tokenContract = await tokenFactory.deploy();
     await tokenContract.init(deployer.address, "test", "TST");
 

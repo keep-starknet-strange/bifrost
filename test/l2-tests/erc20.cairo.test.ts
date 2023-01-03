@@ -1,14 +1,10 @@
 import { BigNumber } from "ethers";
 import { starknet, ethers } from "hardhat";
-import chai from "chai";
-import { solidity } from "ethereum-waffle";
+import { expect } from "chai";
 import { StarknetContract, StarknetContractFactory, Account } from "hardhat/types/runtime";
 
 import { shortString, uint256, number } from "starknet";
 import BN from "bn.js";
-
-chai.use(solidity);
-const { expect } = chai;
 
 const init_balance = "1000000000000000000";
 
