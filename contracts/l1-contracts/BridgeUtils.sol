@@ -26,7 +26,7 @@ library BridgeUtils {
         address baseAccount,
         address factoryAddress,
         uint256 tokenL2Address
-    ) public view returns (address tokenL1Address) {
+    ) public pure returns (address tokenL1Address) {
         bytes20 targetBytes = bytes20(baseAccount);
         bytes32 baseCodeHash;
         assembly {

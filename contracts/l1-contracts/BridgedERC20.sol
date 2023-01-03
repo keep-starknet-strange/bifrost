@@ -23,8 +23,6 @@ contract BridgedERC20 is IERC20, Context {
 
     bool private _initDone = false;
 
-    constructor() {}
-
     function init(address deployer_, string memory name_, string memory symbol_) public {
         require(_initDone == false, "Can only init once");
         _initDone = true;
