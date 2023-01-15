@@ -17,7 +17,6 @@ const chainIds = {
   ropsten: 3,
 };
 
-const MNEMONIC = process.env.MNEMONIC || "";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || "";
@@ -25,12 +24,6 @@ const ALCHEMY_KEY = process.env.ALCHEMY_KEY || "";
 function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
   const url: string = "https://" + network + ".infura.io/v3/" + INFURA_API_KEY;
   return {
-    accounts: {
-      count: 10,
-      initialIndex: 0,
-      mnemonic: MNEMONIC,
-      path: "m/44'/60'/0'/0",
-    },
     chainId: chainIds[network],
     url,
   };
@@ -41,14 +34,11 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
 
 const config: HardhatUserConfig = {
   paths: {
-    cairoPaths: [`./venv/lib/python3.8/site-packages`],
+    cairoPaths: [`./venv/lib/python3.9/site-packages`],
   },
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
-      accounts: {
-        mnemonic: MNEMONIC,
-      },
       chainId: chainIds.hardhat,
     },
     mainnet: createTestnetConfig("mainnet"),
@@ -76,7 +66,7 @@ const config: HardhatUserConfig = {
   gasReporter: {
     currency: "USD",
     gasPrice: 100,
-    // enabled: process.env.REPORT_GAS ? true : false,
+    enabled: process.env.REPORT_GAS == "true" ?? false,
   },
   typechain: {
     outDir: "typechain",
