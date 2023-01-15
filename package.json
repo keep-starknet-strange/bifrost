@@ -1,5 +1,5 @@
 {
-  "name": "starknet-l2-l1-bridge-proposal",
+  "name": "bifrost",
   "version": "0.0.1",
   "description": "Proposal for bridging StarkNet tokens to L1",
   "main": "index.js",
