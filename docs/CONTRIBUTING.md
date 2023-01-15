@@ -13,7 +13,18 @@ To set up a development environment, please follow these steps:
 
 1. Clone the repo
 
+```
+git clone https://github.com/keep-starknet-strange/bifrost.git
+cd bifrost
+```
+
 2. Build and test
+
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
 ```
 yarn install
