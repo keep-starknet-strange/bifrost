@@ -9,6 +9,7 @@ typechain
 yarn.lock
 
 .env
+.env-*
 
 typechain/*
 
