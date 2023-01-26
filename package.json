@@ -10,6 +10,9 @@
     "test:l1": "npx hardhat test ./test/l1-tests/*",
     "test:l2": "npx hardhat test --starknet-network integrated-devnet ./test/l2-tests/*",
     "test": "npm run test:l1 && npm run test:l2",
+    "node:l1": "npx hardhat node",
+    "node:l2": "starknet-devnet --seed 0",
+    "test:integration": "npx hardhat --network localhost test ./test/integration/*",
     "clean": "rm -rf ./artifacts ./cache ./typechain ./starknet-artifacts"
   },
   "author": "amanusk@starkware.co",
