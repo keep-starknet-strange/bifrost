@@ -21,7 +21,6 @@ describe("Class declaration", function () {
     const erc20ClassHash = await account.declare(erc20ContractFactory, {
       maxFee: 150000000000000n,
     });
-    console.log("ERC20 classHash", erc20ClassHash);
 
     const deployerFactory = await starknet.getContractFactory("deployer");
     await account.declare(deployerFactory, {
@@ -38,8 +37,6 @@ describe("Class declaration", function () {
       { salt: "0x42" },
     );
 
-    console.log("Deployer Address", deployer.address);
-
     const constructorArgs = {
       name: shortString.encodeShortString("TEST"),
       symbol: shortString.encodeShortString("TST"),
@@ -51,7 +48,6 @@ describe("Class declaration", function () {
     };
 
     const estimatedFee = await account.estimateFee(deployer, "deploy_contract", constructorArgs);
-    console.log("Estimated fee", estimatedFee);
     const deploymentHash = await account.invoke(deployer, "deploy_contract", constructorArgs, {
       maxFee: estimatedFee.amount * 2n,
     });
@@ -59,14 +55,11 @@ describe("Class declaration", function () {
     const receipt = await starknet.getTransactionReceipt(deploymentHash);
     const deploymentEvent = receipt.events[2];
     const deploymentAddress = deploymentEvent.data[0];
-    console.log("ERC20 Deployment address", deploymentAddress);
 
     const contract = erc20ContractFactory.getContractAt(deploymentAddress);
     const res = await contract.call("totalSupply");
-    console.log(res);
 
     let accountBalance = await contract.call("balanceOf", { account: account.address });
-    console.log(accountBalance);
 
     expect(res.totalSupply.low).to.deep.equal(init_balance);
   }).timeout(TIMEOUT);

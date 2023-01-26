@@ -9,6 +9,8 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 //   initCodeHash: ethers.Arrayish;
 // };
 
+const STARKNET_CORE_ADDRESS_GOERLI = "0xde29d060D45901Fb19ED6C6e959EB22d8626708e";
+
 let saltHex = "0x0563b71ac29b54ef78bbfdB3FBF0338441D3948c573621E7824f9DbC1cE23d56"; // just some random L2 account
 
 describe("Test utils", () => {
@@ -22,7 +24,7 @@ describe("Test utils", () => {
         "contracts/l1-contracts/BridgeUtils.sol:BridgeUtils": bridgeUtils.address,
       },
     });
-    const starknetBridge = await deployerFactory.deploy();
+    const starknetBridge = await deployerFactory.deploy(STARKNET_CORE_ADDRESS_GOERLI);
 
     return { deployer, starknetBridge, bridgeUtils };
   }
@@ -55,6 +57,14 @@ describe("Test utils", () => {
     console.log("Address from contract", contractAddressFromContract);
 
     expect(contractAddressFromContract).to.equal(create2PredictedAddress);
+
+    // TODO: check correct event emitted
+    // let tx = await starknetBridge.createERC20(deployer.address, saltHex, "TOKEN2", "TKN2", { gasLimit: 1000000 });
+    // let rec = await tx.wait();
+    // console.log("Rec", JSON.stringify(rec, null, 2));
+
+    // let l1AddressStored = await starknetBridge.l1Addresses(saltHex);
+    // expect(l1AddressStored).to.equal(create2PredictedAddress);
   });
 
   it("Test string to uint", async () => {
@@ -82,7 +92,7 @@ describe("Test deployed token functionality", () => {
         "contracts/l1-contracts/BridgeUtils.sol:BridgeUtils": bridgeUtils.address,
       },
     });
-    const starknetBridge = await deployerFactory.deploy();
+    const starknetBridge = await deployerFactory.deploy(STARKNET_CORE_ADDRESS_GOERLI);
 
     erc20InstanceAddress = await starknetBridge.callStatic.createERC20(deployer.address, saltHex, "TOKEN1", "TKN1", {
       gasLimit: 3000000,
